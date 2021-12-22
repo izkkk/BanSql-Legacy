@@ -1,3 +1,20 @@
+
+function sendToDiscordWithSpecialURL(Color, message, canal)
+	local DiscordWebHook = canal
+	local Content = {
+	        {
+	            ["color"] = Color,
+	            ["title"] = "Ban Sql",
+	            ["description"] = message,
+		        ["footer"] = {
+	            ["text"] = "Izak Ban Sql",
+	            ["icon_url"] = nil,
+	            },
+	        }
+	    }
+	PerformHttpRequest(DiscordWebHook, function(err, text, headers) end, 'POST', json.encode({username = Name, embeds = Content}), { ['Content-Type'] = 'application/json' })
+end
+
 function cmdban(source, args)
 	local license,identifier,liveid,xblid,discord,playerip
 	local target    = tonumber(args[1])
@@ -87,7 +104,7 @@ function cmdunban(source, args)
 							sourceplayername = "Console"
 						end
 						local message = (data[1].targetplayername .. Text.isunban .." ".. Text.by .." ".. sourceplayername)
-						sendToDiscord(Config.webhookunban, message)
+						sendToDiscordWithSpecialURL(16744192, message, Config.webhookunban)
 					end
 					TriggerEvent('bansql:sendMessage', source, data[1].targetplayername .. Text.isunban)
 				end)
@@ -209,11 +226,6 @@ function cmdbanhistory(source, args)
 	end
 end
 
-function sendToDiscord(canal,message)
-	local DiscordWebHook = canal
-	PerformHttpRequest(DiscordWebHook, function(err, text, headers) end, 'POST', json.encode({content = message}), { ['Content-Type'] = 'application/json' })
-end
-
 function ban(source,license,identifier,liveid,xblid,discord,playerip,targetplayername,sourceplayername,duree,reason,permanent)
 	MySQL.Async.fetchAll('SELECT * FROM banlist WHERE targetplayername like @playername', 
 	{
@@ -280,7 +292,7 @@ function ban(source,license,identifier,liveid,xblid,discord,playerip,targetplaye
 				else
 					message = (targetplayername1..Text.isban.." "..Text.permban..reason.." "..Text.by.." "..sourceplayername1.."```"..identifier1.."\n"..license1.."\n"..liveid1.."\n"..xblid1.."\n"..discord1.."\n"..playerip1.."```")
 				end
-				sendToDiscord(Config.webhookban, message)
+				sendToDiscordWithSpecialURL(16744192, message, Config.webhookban)
 			end
 
 			MySQL.Async.execute(
